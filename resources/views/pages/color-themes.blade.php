@@ -58,18 +58,27 @@
                     </div>
 
                     <div class="fi-color-theme-actions">
-                        <x-filament::button
-                            color="gray"
-                            icon="heroicon-m-swatch"
-                            labeled-from="sm"
-                            tag="button"
+                        <button
                             type="button"
+                            class="fi-color-theme-btn"
+                            style="
+                                background-color: {{ $theme->cardBorder }};
+                                border-color: {{ $theme->cardBorder }};
+                                color: #ffffff;
+                            "
                             wire:click="selectTheme('{{ $theme->key }}')"
                             wire:loading.attr="disabled"
                             wire:target="selectTheme('{{ $theme->key }}')"
                         >
-                            {{ __('filament-color-themes::color-themes.select') }}
-                        </x-filament::button>
+                            <x-filament::icon
+                                icon="heroicon-m-swatch"
+                                class="fi-color-theme-btn-icon"
+                            />
+
+                            <span class="fi-color-theme-btn-label">
+                                {{ __('filament-color-themes::color-themes.select') }}
+                            </span>
+                        </button>
                     </div>
                 </div>
             @endforeach
@@ -183,6 +192,48 @@
         .fi-color-theme-actions {
             flex-shrink: 0;
             margin-inline-start: auto;
+        }
+
+        .fi-color-theme-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            min-height: 2rem;
+            padding: 0.375rem 0.75rem;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1.25rem;
+            cursor: pointer;
+            transition: filter 0.15s ease, opacity 0.15s ease;
+        }
+
+        .fi-color-theme-btn:hover {
+            filter: brightness(0.92);
+        }
+
+        .fi-color-theme-btn:disabled {
+            cursor: wait;
+            opacity: 0.7;
+        }
+
+        .fi-color-theme-btn-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: inherit;
+        }
+
+        .fi-color-theme-btn-label {
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .fi-color-theme-btn-label {
+                display: inline;
+            }
         }
     </style>
 </x-filament-panels::page>
