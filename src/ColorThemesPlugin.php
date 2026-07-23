@@ -364,29 +364,56 @@ class ColorThemesPlugin implements Plugin
             .fi-sidebar .fi-sidebar-item-icon,
             .fi-sidebar .fi-icon-btn,
             .fi-sidebar .fi-icon-btn-icon,
+            .fi-sidebar-nav .fi-sidebar-item-btn,
             .fi-sidebar-nav .fi-sidebar-item-button {
                 color: {$sidebarText} !important;
             }
 
+            /* Filament 5 uses .fi-sidebar-item-btn; keep .fi-sidebar-item-button for older builds */
+            .fi-sidebar .fi-sidebar-item-btn,
+            .fi-sidebar .fi-sidebar-item-button,
+            .fi-sidebar-nav .fi-sidebar-item-btn,
+            .fi-sidebar-nav .fi-sidebar-item-button {
+                border: 1px solid transparent !important;
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
+            .fi-sidebar .fi-sidebar-item-btn:hover,
             .fi-sidebar .fi-sidebar-item-button:hover,
+            .fi-sidebar .fi-sidebar-item > .fi-sidebar-item-btn:hover,
             .fi-sidebar .fi-sidebar-item > .fi-sidebar-item-button:hover,
+            .fi-sidebar-nav .fi-sidebar-item-btn:hover,
             .fi-sidebar-nav .fi-sidebar-item-button:hover {
                 background-color: color-mix(in srgb, {$chrome} 12%, {$sidebarBg}) !important;
             }
 
-            .fi-sidebar .fi-sidebar-item-active > .fi-sidebar-item-button,
+            .fi-sidebar-item.fi-active > .fi-sidebar-item-btn,
+            .fi-sidebar-item.fi-active > .fi-sidebar-item-button,
+            .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-btn,
             .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-button,
+            .fi-sidebar .fi-sidebar-item-active > .fi-sidebar-item-btn,
+            .fi-sidebar .fi-sidebar-item-active > .fi-sidebar-item-button,
+            .fi-sidebar .fi-sidebar-item-btn[aria-current="page"],
             .fi-sidebar .fi-sidebar-item-button[aria-current="page"],
-            .fi-sidebar-nav .fi-active > .fi-sidebar-item-button,
+            .fi-sidebar-nav .fi-sidebar-item.fi-active .fi-sidebar-item-btn,
             .fi-sidebar-nav .fi-sidebar-item.fi-active .fi-sidebar-item-button {
-                background-color: color-mix(in srgb, {$chrome} 18%, {$sidebarBg}) !important;
+                background-color: color-mix(in srgb, {$sidebarBg} 35%, white) !important;
                 color: {$chrome} !important;
+                border: 1px solid {$chrome} !important;
+                outline: 1px solid {$chrome} !important;
+                outline-offset: -1px;
+                box-shadow: inset 0 0 0 1px {$chrome} !important;
             }
 
-            .fi-sidebar .fi-sidebar-item-active > .fi-sidebar-item-button .fi-sidebar-item-icon,
-            .fi-sidebar .fi-sidebar-item-active > .fi-sidebar-item-button .fi-sidebar-item-label,
-            .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-button .fi-sidebar-item-icon,
-            .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-button .fi-sidebar-item-label {
+            .fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-icon,
+            .fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-label,
+            .fi-sidebar-item.fi-active > .fi-sidebar-item-button .fi-sidebar-item-icon,
+            .fi-sidebar-item.fi-active > .fi-sidebar-item-button .fi-sidebar-item-label,
+            .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-icon,
+            .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-label,
+            .fi-sidebar .fi-sidebar-item-btn[aria-current="page"] .fi-sidebar-item-icon,
+            .fi-sidebar .fi-sidebar-item-btn[aria-current="page"] .fi-sidebar-item-label {
                 color: {$chrome} !important;
             }
 
