@@ -4,7 +4,6 @@ namespace Dashk\FilamentColorThemes;
 
 use Closure;
 use Dashk\FilamentColorThemes\Http\Middleware\ApplyColorTheme;
-use Dashk\FilamentColorThemes\Pages\ColorThemes;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -25,9 +24,6 @@ class ColorThemesPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel
-            ->pages([
-                ColorThemes::class,
-            ])
             ->middleware([
                 ApplyColorTheme::class,
             ], isPersistent: true);
@@ -49,7 +45,13 @@ class ColorThemesPlugin implements Plugin
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::USER_MENU_PROFILE_AFTER,
-            fn (): string => view('filament-color-themes::components.color-theme-switcher')->render(),
+            function (): string {
+                if (! $this->canAccess()) {
+                    return '';
+                }
+
+                return view('filament-color-themes::components.color-theme-switcher')->render();
+            },
         );
 
         FilamentView::registerRenderHook(
