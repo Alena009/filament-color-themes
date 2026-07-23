@@ -329,6 +329,30 @@ class ColorThemesPlugin implements Plugin
             .fi-topbar > nav .fi-global-search-field input::placeholder {
                 color: rgba(255, 255, 255, 0.92) !important;
             }
+CSS;
+
+        // Dark theme chrome needs light brand text — Filament logo often uses
+        // gray-* utilities that beat a single color rule.
+        if (in_array($theme->key, ['forest-green', 'office-blue', 'midtone'], true)) {
+            $css .= <<<CSS
+
+            .fi-topbar .fi-logo,
+            .fi-topbar .fi-logo *,
+            .fi-topbar a.fi-logo,
+            .fi-topbar .fi-topbar-start a,
+            .fi-topbar .fi-topbar-start a *,
+            .fi-topbar .fi-topbar-start .fi-logo,
+            .fi-topbar .fi-topbar-start .fi-logo span,
+            .fi-topbar [class*="fi-logo"] {
+                color: #ffffff !important;
+                fill: #ffffff !important;
+                stroke: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+            }
+CSS;
+        }
+
+        $css .= <<<CSS
 
             /* Sidebar / main nav — light tint of the selected theme */
             .fi-sidebar,
