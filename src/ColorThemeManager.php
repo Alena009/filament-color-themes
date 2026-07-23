@@ -2,8 +2,8 @@
 
 namespace Dashk\FilamentColorThemes;
 
+use Dashk\FilamentColorThemes\Themes\PaletteFactory;
 use Dashk\FilamentColorThemes\Themes\Theme;
-use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cookie;
 
@@ -17,34 +17,55 @@ class ColorThemeManager
     public function getThemes(): Collection
     {
         return collect([
-            'forest-green' => new Theme(
+            'forest-green' => $this->makeTheme(
                 key: 'forest-green',
                 name: 'ForestGreen',
                 hex: '#228B22',
-                primary: Color::hex('#228B22'),
                 cardBackground: '#dcfce7',
                 cardBorder: '#15803d',
                 cardText: '#14532d',
+                grayChromaStrength: 0.40,
             ),
-            'office-blue' => new Theme(
+            'office-blue' => $this->makeTheme(
                 key: 'office-blue',
                 name: 'Office Blue',
                 hex: '#2563eb',
-                primary: Color::hex('#2563eb'),
                 cardBackground: '#dbeafe',
                 cardBorder: '#1d4ed8',
                 cardText: '#1e3a8a',
+                grayChromaStrength: 0.38,
             ),
-            'midtone' => new Theme(
+            'midtone' => $this->makeTheme(
                 key: 'midtone',
                 name: 'Midtone',
                 hex: '#6b7280',
-                primary: Color::hex('#6b7280'),
                 cardBackground: '#e5e7eb',
                 cardBorder: '#374151',
                 cardText: '#1f2937',
+                grayChromaStrength: 0.20,
             ),
         ]);
+    }
+
+    protected function makeTheme(
+        string $key,
+        string $name,
+        string $hex,
+        string $cardBackground,
+        string $cardBorder,
+        string $cardText,
+        float $grayChromaStrength,
+    ): Theme {
+        return new Theme(
+            key: $key,
+            name: $name,
+            hex: $hex,
+            primary: PaletteFactory::primary($hex),
+            gray: PaletteFactory::tintedGray($hex, $grayChromaStrength),
+            cardBackground: $cardBackground,
+            cardBorder: $cardBorder,
+            cardText: $cardText,
+        );
     }
 
     public function getTheme(string $key): ?Theme
@@ -121,7 +142,7 @@ class ColorThemeManager
     }
 
     /**
-     * @return array<string, string>|null
+     * @return array{primary: array<int, string>, gray: array<int, string>}|null
      */
     public function getCurrentColors(): ?array
     {
@@ -131,8 +152,6 @@ class ColorThemeManager
             return null;
         }
 
-        return [
-            'primary' => $theme->hex,
-        ];
+        return $theme->getFilamentColors();
     }
 }

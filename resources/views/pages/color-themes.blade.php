@@ -8,6 +8,21 @@
             <p class="fi-color-themes-description">
                 {{ __('filament-color-themes::color-themes.sections.default_themes_description') }}
             </p>
+
+            @if (filled($this->getCurrentThemeKey()))
+                <div style="margin-top: 0.75rem;">
+                    <x-filament::button
+                        color="gray"
+                        outlined
+                        size="sm"
+                        wire:click="clearTheme"
+                        wire:loading.attr="disabled"
+                        wire:target="clearTheme"
+                    >
+                        {{ __('filament-color-themes::color-themes.reset') }}
+                    </x-filament::button>
+                </div>
+            @endif
         </div>
 
         <div class="fi-color-themes-grid">

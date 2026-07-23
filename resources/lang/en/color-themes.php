@@ -20,8 +20,11 @@ return [
 
     'notifications' => [
         'applied' => 'Color theme applied successfully.',
+        'cleared' => 'Color theme cleared. Filament appearance restored.',
     ],
 
     'select' => 'Select',
+    'reset' => 'Use Filament default',
+    'user_menu_label' => 'Color themes',
 
 ];

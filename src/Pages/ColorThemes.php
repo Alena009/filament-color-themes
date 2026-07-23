@@ -118,6 +118,31 @@ class ColorThemes extends Page
             ->success()
             ->send();
 
-        $this->js('window.location.reload()');
+        // Color themes replace Filament dark mode — force light before reload.
+        $panelId = Filament::getCurrentPanel()?->getId() ?? 'admin';
+
+        $this->js(<<<JS
+            try {
+                localStorage.setItem('theme', 'light');
+                localStorage.setItem('theme-{$panelId}', 'light');
+            } catch (e) {}
+            document.documentElement.classList.remove('dark');
+            window.location.reload();
+            JS);
+    }
+
+    public function clearTheme(): void
+    {
+        app(ColorThemeManager::class)->clearTheme();
+
+        Notification::make()
+            ->title(__('filament-color-themes::color-themes.notifications.cleared'))
+            ->success()
+            ->send();
+
+        $this->js(<<<JS
+            document.documentElement.removeAttribute('data-filament-color-theme');
+            window.location.reload();
+            JS);
     }
 }

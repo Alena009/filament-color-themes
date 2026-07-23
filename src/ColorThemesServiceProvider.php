@@ -2,7 +2,10 @@
 
 namespace Dashk\FilamentColorThemes;
 
+use Dashk\FilamentColorThemes\Http\Controllers\ClearColorThemeController;
+use Dashk\FilamentColorThemes\Http\Controllers\SetColorThemeController;
 use Dashk\FilamentColorThemes\Pages\ColorThemes;
+use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -31,5 +34,19 @@ class ColorThemesServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Livewire::component('dashk.filament-color-themes.pages.color-themes', ColorThemes::class);
+
+        $this->registerRoutes();
+    }
+
+    protected function registerRoutes(): void
+    {
+        Route::middleware(['web'])->group(function (): void {
+            Route::post('/filament-color-themes/clear', ClearColorThemeController::class)
+                ->name('filament-color-themes.clear');
+
+            Route::post('/filament-color-themes/set/{theme}', SetColorThemeController::class)
+                ->where('theme', '[A-Za-z0-9\-]+')
+                ->name('filament-color-themes.set');
+        });
     }
 }

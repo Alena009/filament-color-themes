@@ -10,6 +10,7 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
 
 class ColorThemesPlugin implements Plugin
@@ -36,10 +37,24 @@ class ColorThemesPlugin implements Plugin
     {
         app(ColorApplier::class)->registerDeferred();
 
-        // Inject after @filamentStyles so our palette overrides the defaults.
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::HEAD_START,
+            fn (): HtmlString => $this->renderExclusiveModeBootScript(),
+        );
+
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_AFTER,
-            fn (): HtmlString => $this->renderThemeCssVariables(),
+            fn (): HtmlString => $this->renderThemeStyles(),
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::USER_MENU_PROFILE_AFTER,
+            fn (): string => view('filament-color-themes::components.color-theme-switcher')->render(),
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::BODY_END,
+            fn (): HtmlString => $this->renderSwitcherScript(),
         );
     }
 
@@ -72,7 +87,166 @@ class ColorThemesPlugin implements Plugin
         return true;
     }
 
-    protected function renderThemeCssVariables(): HtmlString
+    /**
+     * Color themes and Filament light/dark/system are mutually exclusive.
+     * When a color theme is active, force light appearance before Filament
+     * paints dark mode from localStorage.
+     */
+    protected function renderExclusiveModeBootScript(): HtmlString
+    {
+        $theme = app(ColorThemeManager::class)->getCurrentTheme();
+
+        if (! $theme) {
+            return new HtmlString('');
+        }
+
+        $panelId = Filament::getCurrentPanel()?->getId()
+            ?? Filament::getCurrentOrDefaultPanel()?->getId()
+            ?? 'admin';
+
+        $themeKey = $this->jsEncode($theme->key);
+        $panelIdJs = $this->jsEncode($panelId);
+
+        return new HtmlString(<<<HTML
+            <script>
+                (function () {
+                    var themeKey = {$themeKey};
+                    var panelId = {$panelIdJs};
+
+                    document.documentElement.setAttribute('data-filament-color-theme', themeKey);
+
+                    try {
+                        localStorage.setItem('theme', 'light');
+                        localStorage.setItem('theme-' + panelId, 'light');
+                    } catch (e) {}
+
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.style.colorScheme = 'light';
+                })();
+            </script>
+            HTML);
+    }
+
+    protected function renderSwitcherScript(): HtmlString
+    {
+        $clearUrl = URL::route('filament-color-themes.clear');
+        $cookieName = app(ColorThemeManager::class)->getSessionKey();
+        $hasActiveTheme = app(ColorThemeManager::class)->hasActiveTheme();
+        $panelId = Filament::getCurrentPanel()?->getId()
+            ?? Filament::getCurrentOrDefaultPanel()?->getId()
+            ?? 'admin';
+
+        return new HtmlString(<<<HTML
+            <script>
+                (function () {
+                    if (window.__filamentColorThemesSwitcherBound) {
+                        return;
+                    }
+
+                    window.__filamentColorThemesSwitcherBound = true;
+
+                    const clearUrl = {$this->jsEncode($clearUrl)};
+                    const cookieName = {$this->jsEncode($cookieName)};
+                    const panelId = {$this->jsEncode($panelId)};
+                    let hasActiveTheme = {$this->jsEncode($hasActiveTheme)};
+
+                    function csrfToken() {
+                        return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                    }
+
+                    function forceFilamentLightMode() {
+                        try {
+                            localStorage.setItem('theme', 'light');
+                            localStorage.setItem('theme-' + panelId, 'light');
+                        } catch (e) {}
+
+                        document.documentElement.classList.remove('dark');
+                        document.documentElement.style.colorScheme = 'light';
+                        document.body?.classList.remove('dark');
+                    }
+
+                    async function postJson(url) {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken(),
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            credentials: 'same-origin',
+                        });
+
+                        if (! response.ok) {
+                            throw new Error('Color theme request failed: ' + response.status);
+                        }
+
+                        return true;
+                    }
+
+                    async function selectColorTheme(key, setUrlTemplate) {
+                        const url = setUrlTemplate.replace('THEMEKEY', encodeURIComponent(key));
+
+                        try {
+                            await postJson(url);
+                            forceFilamentLightMode();
+                            hasActiveTheme = true;
+                            window.location.reload();
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+
+                    async function clearColorThemeAndReload() {
+                        try {
+                            await postJson(clearUrl);
+                        } catch (e) {}
+
+                        document.cookie = cookieName + '=; Max-Age=0; path=/; SameSite=Lax';
+                        document.documentElement.removeAttribute('data-filament-color-theme');
+                        hasActiveTheme = false;
+                        window.location.reload();
+                    }
+
+                    document.addEventListener('click', function (event) {
+                        const colorBtn = event.target.closest('[data-color-theme-key]');
+
+                        if (colorBtn) {
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            const key = colorBtn.getAttribute('data-color-theme-key');
+                            const root = colorBtn.closest('[data-color-theme-switcher]');
+                            const template = root?.getAttribute('data-set-url-template');
+
+                            if (key && template) {
+                                selectColorTheme(key, template);
+                            }
+
+                            return;
+                        }
+
+                        // Native light/dark/system → drop color theme so only appearance applies.
+                        const appearanceBtn = event.target.closest(
+                            '.fi-theme-switcher:not([data-color-theme-switcher]) .fi-theme-switcher-btn'
+                        );
+
+                        if (appearanceBtn && hasActiveTheme) {
+                            setTimeout(function () {
+                                clearColorThemeAndReload();
+                            }, 0);
+                        }
+                    });
+                })();
+            </script>
+            HTML);
+    }
+
+    protected function jsEncode(mixed $value): string
+    {
+        return json_encode($value, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+    }
+
+    protected function renderThemeStyles(): HtmlString
     {
         $theme = app(ColorThemeManager::class)->getCurrentTheme();
 
@@ -82,22 +256,155 @@ class ColorThemesPlugin implements Plugin
 
         $variables = [];
 
-        foreach ($theme->primary as $shade => $value) {
-            if (! is_string($value) || ! str_starts_with($value, 'oklch(')) {
-                continue;
+        foreach (['primary' => $theme->primary, 'gray' => $theme->gray] as $name => $palette) {
+            foreach ($palette as $shade => $value) {
+                if (! is_string($value) || ! str_starts_with($value, 'oklch(')) {
+                    continue;
+                }
+
+                $variables[] = "--{$name}-{$shade}:{$value}";
+            }
+        }
+
+        $chrome = $theme->cardBorder;
+        $sidebarBg = $theme->cardBackground;
+        $sidebarText = $theme->cardText;
+        $variables[] = "--color-theme-chrome:{$chrome}";
+        $variables[] = "--color-theme-sidebar-bg:{$sidebarBg}";
+        $variables[] = "--color-theme-sidebar-text:{$sidebarText}";
+
+        $cssVariables = implode(';', $variables) . ';';
+
+        $css = <<<CSS
+            :root, html.fi, .fi-body {
+                {$cssVariables}
             }
 
-            $variables[] = "--primary-{$shade}:{$value}";
-        }
+            /*
+             * Mutual exclusivity: while a color theme is active, Filament's
+             * light/dark/system row must not look selected (even if Alpine
+             * still tracks an appearance mode under the hood).
+             */
+            html[data-filament-color-theme] .fi-theme-switcher:not([data-color-theme-switcher]) .fi-theme-switcher-btn.fi-active {
+                background-color: transparent !important;
+                color: inherit !important;
+            }
 
-        if ($variables === []) {
-            return new HtmlString('');
-        }
+            html[data-filament-color-theme] .fi-theme-switcher:not([data-color-theme-switcher]) .fi-theme-switcher-btn.fi-active svg,
+            html[data-filament-color-theme] .fi-theme-switcher:not([data-color-theme-switcher]) .fi-theme-switcher-btn.fi-active .fi-icon {
+                color: inherit !important;
+                stroke: currentColor !important;
+            }
 
-        $css = implode(';', $variables) . ';';
+            .fi-topbar,
+            .fi-topbar > nav,
+            header.fi-topbar {
+                background-color: {$chrome} !important;
+                border-color: {$chrome} !important;
+                box-shadow: none !important;
+            }
+
+            .fi-topbar > nav > .fi-logo,
+            .fi-topbar > nav .fi-topbar-start .fi-logo,
+            .fi-topbar > nav .fi-topbar-open-sidebar-btn,
+            .fi-topbar > nav .fi-topbar-open-sidebar-btn-icon,
+            .fi-topbar > nav .fi-topbar-close-sidebar-btn,
+            .fi-topbar > nav .fi-topbar-close-sidebar-btn-icon,
+            .fi-topbar > nav .fi-topbar-open-database-notifications-btn,
+            .fi-topbar > nav .fi-topbar-open-database-notifications-btn-icon,
+            .fi-topbar > nav .fi-icon-btn:not(.fi-user-menu *),
+            .fi-topbar > nav .fi-icon-btn-icon,
+            .fi-topbar > nav .fi-global-search-field .fi-icon,
+            .fi-topbar > nav .fi-topbar-item-label {
+                color: #ffffff !important;
+            }
+
+            .fi-topbar > nav .fi-input-wrp,
+            .fi-topbar > nav .fi-global-search-field {
+                background-color: rgba(255, 255, 255, 0.16) !important;
+                border-color: rgba(255, 255, 255, 0.28) !important;
+            }
+
+            .fi-topbar > nav .fi-global-search-field input,
+            .fi-topbar > nav .fi-global-search-field input::placeholder {
+                color: rgba(255, 255, 255, 0.92) !important;
+            }
+
+            /* Sidebar / main nav — light tint of the selected theme */
+            .fi-sidebar,
+            .fi-main-sidebar,
+            aside.fi-sidebar,
+            .fi-sidebar-ctn,
+            .fi-sidebar-nav,
+            .fi-sidebar .fi-sidebar-header,
+            .fi-sidebar-header,
+            html[data-filament-color-theme] .fi-sidebar,
+            html[data-filament-color-theme] .fi-main-sidebar,
+            html[data-filament-color-theme] aside.fi-sidebar,
+            html[data-filament-color-theme] .fi-sidebar-ctn,
+            html[data-filament-color-theme] .fi-sidebar-nav,
+            html[data-filament-color-theme] .fi-sidebar .fi-sidebar-header,
+            html[data-filament-color-theme] .fi-sidebar-header {
+                background-color: {$sidebarBg} !important;
+                background-image: none !important;
+                border-color: color-mix(in srgb, {$chrome} 28%, transparent) !important;
+            }
+
+            .fi-sidebar,
+            .fi-main-sidebar,
+            .fi-sidebar-ctn {
+                border-inline-end: 1px solid color-mix(in srgb, {$chrome} 22%, transparent) !important;
+                box-shadow: none !important;
+            }
+
+            .fi-sidebar .fi-sidebar-header,
+            .fi-sidebar .fi-logo,
+            .fi-sidebar .fi-sidebar-item-label,
+            .fi-sidebar .fi-sidebar-group-label,
+            .fi-sidebar .fi-sidebar-item-icon,
+            .fi-sidebar .fi-icon-btn,
+            .fi-sidebar .fi-icon-btn-icon,
+            .fi-sidebar-nav .fi-sidebar-item-button {
+                color: {$sidebarText} !important;
+            }
+
+            .fi-sidebar .fi-sidebar-item-button:hover,
+            .fi-sidebar .fi-sidebar-item > .fi-sidebar-item-button:hover,
+            .fi-sidebar-nav .fi-sidebar-item-button:hover {
+                background-color: color-mix(in srgb, {$chrome} 12%, {$sidebarBg}) !important;
+            }
+
+            .fi-sidebar .fi-sidebar-item-active > .fi-sidebar-item-button,
+            .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-button,
+            .fi-sidebar .fi-sidebar-item-button[aria-current="page"],
+            .fi-sidebar-nav .fi-active > .fi-sidebar-item-button,
+            .fi-sidebar-nav .fi-sidebar-item.fi-active .fi-sidebar-item-button {
+                background-color: color-mix(in srgb, {$chrome} 18%, {$sidebarBg}) !important;
+                color: {$chrome} !important;
+            }
+
+            .fi-sidebar .fi-sidebar-item-active > .fi-sidebar-item-button .fi-sidebar-item-icon,
+            .fi-sidebar .fi-sidebar-item-active > .fi-sidebar-item-button .fi-sidebar-item-label,
+            .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-button .fi-sidebar-item-icon,
+            .fi-sidebar .fi-sidebar-item.fi-active > .fi-sidebar-item-button .fi-sidebar-item-label {
+                color: {$chrome} !important;
+            }
+
+            /* Soft page canvas in the same palette */
+            .fi-body,
+            .fi-main,
+            .fi-main-ctn {
+                background-color: color-mix(in srgb, {$sidebarBg} 55%, white) !important;
+            }
+
+            .fi-dropdown-panel,
+            .fi-user-menu-panel {
+                color: inherit;
+            }
+            CSS;
 
         return new HtmlString(
-            '<style id="filament-color-themes-vars">:root{' . $css . '}</style>'
+            '<style id="filament-color-themes-vars">' . $css . '</style>'
         );
     }
 }

@@ -20,8 +20,11 @@ return [
 
     'notifications' => [
         'applied' => 'Цветовая тема успешно применена.',
+        'cleared' => 'Цветовая тема сброшена. Восстановлен вид Filament.',
     ],
 
     'select' => 'Выбрать',
+    'reset' => 'Стандартный вид Filament',
+    'user_menu_label' => 'Цветовые темы',
 
 ];

@@ -6,12 +6,14 @@ class Theme
 {
     /**
      * @param  array<int, string>  $primary
+     * @param  array<int, string>  $gray
      */
     public function __construct(
         public readonly string $key,
         public readonly string $name,
         public readonly string $hex,
         public readonly array $primary,
+        public readonly array $gray,
         public readonly string $cardBackground,
         public readonly string $cardBorder,
         public readonly string $cardText,
@@ -20,5 +22,18 @@ class Theme
     public function getLabel(): string
     {
         return __('filament-color-themes::color-themes.themes.' . $this->key);
+    }
+
+    /**
+     * Colors registered with FilamentColor / CSS variables.
+     *
+     * @return array{primary: array<int, string>, gray: array<int, string>}
+     */
+    public function getFilamentColors(): array
+    {
+        return [
+            'primary' => $this->primary,
+            'gray' => $this->gray,
+        ];
     }
 }
