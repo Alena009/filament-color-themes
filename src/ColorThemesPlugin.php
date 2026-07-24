@@ -385,9 +385,65 @@ class ColorThemesPlugin implements Plugin
             .fi-ta-header-toolbar .fi-btn,
             .fi-ta-header-toolbar .fi-btn-label,
             .fi-ta-header-toolbar .fi-ac-btn-label,
+            .fi-ta-header-toolbar .fi-btn .fi-icon,
             .fi-ta-header-toolbar .fi-ta-actions,
             .fi-ta-header-toolbar .fi-dropdown-trigger {
                 color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+            }
+
+            /* Custom header/bulk actions: default light button bg makes white
+             * text invisible on chrome — restyle as translucent chips. */
+            .fi-ta-header-toolbar .fi-btn,
+            .fi-ta-header-toolbar .fi-ta-actions .fi-btn,
+            .fi-ta-header-toolbar .fi-dropdown-trigger .fi-btn {
+                background-color: rgba(255, 255, 255, 0.16) !important;
+                background-image: none !important;
+                border-color: rgba(255, 255, 255, 0.28) !important;
+                box-shadow: none !important;
+                --tw-ring-color: transparent !important;
+                --tw-ring-shadow: 0 0 #0000 !important;
+                --tw-ring-offset-shadow: 0 0 #0000 !important;
+            }
+
+            .fi-ta-header-toolbar .fi-btn:hover,
+            .fi-ta-header-toolbar .fi-ta-actions .fi-btn:hover {
+                background-color: rgba(255, 255, 255, 0.26) !important;
+            }
+
+            .fi-ta-header-toolbar .fi-btn-badge,
+            .fi-ta-header-toolbar .fi-btn .fi-badge {
+                background-color: rgba(255, 255, 255, 0.9) !important;
+                color: {$chrome} !important;
+                -webkit-text-fill-color: {$chrome} !important;
+            }
+
+            /* Dropdown panels (bulk actions etc.) open inside the toolbar:
+             * they are white, so undo the forced white text/chip styles. */
+            .fi-ta-header-toolbar .fi-dropdown-panel,
+            .fi-ta-header-toolbar .fi-dropdown-panel * {
+                color: rgb(24, 24, 27) !important;
+                -webkit-text-fill-color: rgb(24, 24, 27) !important;
+            }
+
+            .fi-ta-header-toolbar .fi-dropdown-panel .fi-btn,
+            .fi-ta-header-toolbar .fi-dropdown-panel .fi-dropdown-list-item {
+                background-color: transparent !important;
+                border-color: transparent !important;
+            }
+
+            .fi-ta-header-toolbar .fi-dropdown-panel .fi-dropdown-list-item:hover {
+                background-color: rgba(0, 0, 0, 0.05) !important;
+            }
+
+            /* Keep danger items (Delete) red inside the dropdown */
+            .fi-ta-header-toolbar .fi-dropdown-panel .fi-color-danger,
+            .fi-ta-header-toolbar .fi-dropdown-panel .fi-color-danger *,
+            .fi-ta-header-toolbar .fi-dropdown-panel [class*="fi-color-danger"],
+            .fi-ta-header-toolbar .fi-dropdown-panel [class*="fi-color-danger"] *,
+            .fi-ta-header-toolbar .fi-dropdown-panel [class*="text-danger"] {
+                color: rgb(220, 38, 38) !important;
+                -webkit-text-fill-color: rgb(220, 38, 38) !important;
             }
 
             .fi-ta-header-toolbar .fi-ta-search,
