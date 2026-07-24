@@ -1,9 +1,9 @@
 <?php
 
-namespace Dashk\FilamentColorThemes;
+namespace AlenaDashko\FilamentColorThemes;
 
 use Closure;
-use Dashk\FilamentColorThemes\Http\Middleware\ApplyColorTheme;
+use AlenaDashko\FilamentColorThemes\Http\Middleware\ApplyColorTheme;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\Panel;

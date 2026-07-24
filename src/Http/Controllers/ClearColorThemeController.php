@@ -1,8 +1,8 @@
 <?php
 
-namespace Dashk\FilamentColorThemes\Http\Controllers;
+namespace AlenaDashko\FilamentColorThemes\Http\Controllers;
 
-use Dashk\FilamentColorThemes\ColorThemeManager;
+use AlenaDashko\FilamentColorThemes\ColorThemeManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

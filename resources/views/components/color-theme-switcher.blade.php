@@ -1,5 +1,5 @@
 @php
-    use Dashk\FilamentColorThemes\ColorThemeManager;
+    use AlenaDashko\FilamentColorThemes\ColorThemeManager;
 
     $manager = app(ColorThemeManager::class);
     $themes = $manager->getThemes();

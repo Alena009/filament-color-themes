@@ -1,10 +1,10 @@
 <?php
 
-namespace Dashk\FilamentColorThemes\Http\Middleware;
+namespace AlenaDashko\FilamentColorThemes\Http\Middleware;
 
 use Closure;
-use Dashk\FilamentColorThemes\ColorApplier;
-use Dashk\FilamentColorThemes\ColorThemeManager;
+use AlenaDashko\FilamentColorThemes\ColorApplier;
+use AlenaDashko\FilamentColorThemes\ColorThemeManager;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Dashk\FilamentColorThemes;
+namespace AlenaDashko\FilamentColorThemes;
 
-use Dashk\FilamentColorThemes\Http\Controllers\ClearColorThemeController;
-use Dashk\FilamentColorThemes\Http\Controllers\SetColorThemeController;
+use AlenaDashko\FilamentColorThemes\Http\Controllers\ClearColorThemeController;
+use AlenaDashko\FilamentColorThemes\Http\Controllers\SetColorThemeController;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

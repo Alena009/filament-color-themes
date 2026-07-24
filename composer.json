@@ -23,13 +23,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Dashk\\FilamentColorThemes\\": "src/"
+            "AlenaDashko\\FilamentColorThemes\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Dashk\\FilamentColorThemes\\ColorThemesServiceProvider"
+                "AlenaDashko\\FilamentColorThemes\\ColorThemesServiceProvider"
             ]
         }
     },

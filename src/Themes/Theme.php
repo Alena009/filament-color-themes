@@ -1,6 +1,6 @@
 <?php
 
-namespace Dashk\FilamentColorThemes\Themes;
+namespace AlenaDashko\FilamentColorThemes\Themes;
 
 class Theme
 {

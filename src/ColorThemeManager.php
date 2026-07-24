@@ -1,9 +1,9 @@
 <?php
 
-namespace Dashk\FilamentColorThemes;
+namespace AlenaDashko\FilamentColorThemes;
 
-use Dashk\FilamentColorThemes\Themes\PaletteFactory;
-use Dashk\FilamentColorThemes\Themes\Theme;
+use AlenaDashko\FilamentColorThemes\Themes\PaletteFactory;
+use AlenaDashko\FilamentColorThemes\Themes\Theme;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cookie;
 

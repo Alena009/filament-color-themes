@@ -29,7 +29,7 @@ If the package lives locally next to your app:
 
 ```bash
 composer config repositories.filament-color-themes path ../filament-color-themes
-composer require dashk/filament-color-themes:@dev
+composer require alenadashko/filament-color-themes:@dev
 ```
 
 Or via a Composer path repository in your app `composer.json`:
@@ -43,7 +43,7 @@ Or via a Composer path repository in your app `composer.json`:
         }
     ],
     "require": {
-        "dashk/filament-color-themes": "@dev"
+        "alenadashko/filament-color-themes": "@dev"
     }
 }
 ```
@@ -53,7 +53,7 @@ Or via a Composer path repository in your app `composer.json`:
 Add the plugin to `AdminPanelProvider` (or your panel provider):
 
 ```php
-use Dashk\FilamentColorThemes\ColorThemesPlugin;
+use AlenaDashko\FilamentColorThemes\ColorThemesPlugin;
 
 public function panel(Panel $panel): Panel
 {
@@ -74,8 +74,8 @@ php artisan view:clear
 Your `AdminPanelProvider` should look like this:
 
 ```php
-use Dashk\FilamentColorThemes\ColorThemesPlugin;
-use Dashk\FilamentColorThemes\Http\Middleware\ApplyColorTheme;
+use AlenaDashko\FilamentColorThemes\ColorThemesPlugin;
+use AlenaDashko\FilamentColorThemes\Http\Middleware\ApplyColorTheme;
 
 return $panel
     ->plugin(ColorThemesPlugin::make())

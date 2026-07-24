@@ -1,6 +1,6 @@
 <?php
 
-namespace Dashk\FilamentColorThemes;
+namespace AlenaDashko\FilamentColorThemes;
 
 use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
