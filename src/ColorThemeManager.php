@@ -53,6 +53,16 @@ class ColorThemeManager
                 cardText: '#3E2723',
                 grayChromaStrength: 0.32,
             ),
+            'midnight' => $this->makeTheme(
+                key: 'midnight',
+                name: 'Midnight',
+                hex: '#5B7C99',
+                cardBackground: '#334155',
+                cardBorder: '#1e293b',
+                cardText: '#e2e8f0',
+                grayChromaStrength: 0.22,
+                swatch: 'N',
+            ),
         ]);
     }
 
@@ -64,6 +74,7 @@ class ColorThemeManager
         string $cardBorder,
         string $cardText,
         float $grayChromaStrength,
+        string $swatch = '',
     ): Theme {
         return new Theme(
             key: $key,
@@ -74,6 +85,7 @@ class ColorThemeManager
             cardBackground: $cardBackground,
             cardBorder: $cardBorder,
             cardText: $cardText,
+            swatch: $swatch,
         );
     }
 

@@ -17,6 +17,7 @@ return [
         'office-blue' => 'Office Blue',
         'midtone' => 'Midtone',
         'sepia' => 'Sepia',
+        'midnight' => 'Midnight',
     ],
 
     'notifications' => [

@@ -42,7 +42,7 @@
                     class="fi-color-theme-switcher-swatch"
                     style="background-color: {{ $theme->cardBorder }};"
                 >
-                    {{ strtoupper(substr($theme->name, 0, 1)) }}
+                    {{ $theme->getSwatchLetter() }}
                 </span>
             </button>
         @endforeach
@@ -52,7 +52,7 @@
 <style>
     .fi-color-theme-switcher {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 0.25rem;
         width: 100%;
         padding: 0.25rem;

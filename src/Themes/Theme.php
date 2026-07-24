@@ -17,11 +17,21 @@ class Theme
         public readonly string $cardBackground,
         public readonly string $cardBorder,
         public readonly string $cardText,
+        public readonly string $swatch = '',
     ) {}
 
     public function getLabel(): string
     {
         return __('filament-color-themes::color-themes.themes.' . $this->key);
+    }
+
+    public function getSwatchLetter(): string
+    {
+        if (filled($this->swatch)) {
+            return strtoupper($this->swatch);
+        }
+
+        return strtoupper(substr($this->name, 0, 1));
     }
 
     /**
