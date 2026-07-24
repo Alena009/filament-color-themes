@@ -583,6 +583,9 @@ CSS;
             .fi-ta-header-ctn .fi-ta-filters-above-content-ctn {
                 background-color: {$bg} !important;
                 color: {$text} !important;
+                border: 1px solid color-mix(in srgb, {$chrome} 22%, transparent) !important;
+                border-bottom: none !important;
+                border-radius: 0.75rem 0.75rem 0 0 !important;
             }
 
             .fi-ta-filters,
