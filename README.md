@@ -101,6 +101,27 @@ php artisan vendor:publish --tag="filament-color-themes-translations"
 When a theme is selected, the plugin updates both the `primary` palette and a tinted `gray` palette (backgrounds, borders, sidebar/card text).  
 `gray` follows the same lightness curve as Filament’s Zinc scale, but keeps a low chroma of the selected theme — similar to dark mode, where everything is built from dark-gray variations.
 
+### Panel `->colors()` and themes
+
+Colors you define on the panel keep working while a theme is active. For example, with a brand primary:
+
+```php
+return $panel
+    ->colors([
+        'primary' => '#ED1A38',
+    ])
+    ->plugin(ColorThemesPlugin::make());
+```
+
+Buttons, links and other `primary` elements stay `#ED1A38` in every theme; the theme still styles the topbar, sidebar, and gray surfaces. If you want the active theme to fully override panel colors instead (the pre-1.1 behavior):
+
+```php
+->plugin(
+    ColorThemesPlugin::make()
+        ->overridePanelColors()
+)
+```
+
 Restrict access to the user-menu theme switcher:
 
 ```php

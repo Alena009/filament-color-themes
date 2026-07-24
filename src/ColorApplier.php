@@ -2,6 +2,7 @@
 
 namespace AlenaDashko\FilamentColorThemes;
 
+use AlenaDashko\FilamentColorThemes\Support\FilamentCompat;
 use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
 use ReflectionObject;
@@ -19,7 +20,7 @@ class ColorApplier
     public function registerDeferred(): void
     {
         FilamentColor::register(function (): array {
-            return $this->themes->getCurrentColors() ?? [];
+            return $this->getApplicableColors() ?? [];
         });
     }
 
@@ -29,7 +30,7 @@ class ColorApplier
      */
     public function apply(): void
     {
-        $colors = $this->themes->getCurrentColors();
+        $colors = $this->getApplicableColors();
 
         if ($colors === null) {
             return;
@@ -40,6 +41,56 @@ class ColorApplier
         $this->clearColorCache($manager);
 
         $manager->register($colors);
+    }
+
+    /**
+     * Theme palette minus any color keys the panel defines via ->colors(),
+     * so the app's brand colors keep working alongside a theme.
+     *
+     * @return array<string, array<int, string>>|null
+     */
+    public function getApplicableColors(): ?array
+    {
+        $colors = $this->themes->getCurrentColors();
+
+        if ($colors === null) {
+            return null;
+        }
+
+        foreach ($this->getPreservedColorKeys() as $key) {
+            unset($colors[$key]);
+        }
+
+        return $colors === [] ? null : $colors;
+    }
+
+    /**
+     * Color keys that must stay as the panel defined them.
+     *
+     * @return array<int, string>
+     */
+    public function getPreservedColorKeys(): array
+    {
+        $panel = FilamentCompat::getCurrentPanel();
+
+        if (! $panel || ! $panel->hasPlugin('filament-color-themes')) {
+            return [];
+        }
+
+        /** @var ColorThemesPlugin $plugin */
+        $plugin = $panel->getPlugin('filament-color-themes');
+
+        if ($plugin->shouldOverridePanelColors()) {
+            return [];
+        }
+
+        if (! method_exists($panel, 'getColors')) {
+            return [];
+        }
+
+        $panelColors = $panel->getColors();
+
+        return is_array($panelColors) ? array_keys($panelColors) : [];
     }
 
     protected function clearColorCache(ColorManager $manager): void

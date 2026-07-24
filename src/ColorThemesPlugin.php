@@ -16,9 +16,28 @@ class ColorThemesPlugin implements Plugin
 {
     protected ?Closure $canViewCallback = null;
 
+    protected bool $overridesPanelColors = false;
+
     public function getId(): string
     {
         return 'filament-color-themes';
+    }
+
+    /**
+     * By default, colors the panel defines via ->colors() (e.g. brand primary)
+     * are preserved and themes only fill the rest. Call this to let the active
+     * theme override the panel colors entirely.
+     */
+    public function overridePanelColors(bool $condition = true): static
+    {
+        $this->overridesPanelColors = $condition;
+
+        return $this;
+    }
+
+    public function shouldOverridePanelColors(): bool
+    {
+        return $this->overridesPanelColors;
     }
 
     public function register(Panel $panel): void
@@ -257,7 +276,15 @@ class ColorThemesPlugin implements Plugin
 
         $variables = [];
 
+        // Don't emit CSS vars for colors the panel defines via ->colors():
+        // Filament renders those itself and the theme must not shadow them.
+        $preservedKeys = app(ColorApplier::class)->getPreservedColorKeys();
+
         foreach (['primary' => $theme->primary, 'gray' => $theme->gray] as $name => $palette) {
+            if (in_array($name, $preservedKeys, true)) {
+                continue;
+            }
+
             foreach ($palette as $shade => $value) {
                 if (! is_string($value)) {
                     continue;
