@@ -25,28 +25,33 @@ A Filament PHP plugin that adds panel color theme selection from the user menu.
 
 ### 1. Require the package
 
-If the package lives locally next to your app:
+From Packagist (no `repositories` / path needed):
 
 ```bash
-composer config repositories.filament-color-themes path ../filament-color-themes
+composer require alenadashko/filament-color-themes:dev-main
+```
+
+Until a tagged release exists, Composer needs the `dev-main` constraint (or `@dev`). If Composer complains about stability, either use that constraint or set `"minimum-stability": "dev"` with `"prefer-stable": true` in the app `composer.json`.
+
+**Important:** remove any leftover path repository for this package from the app `composer.json` / `composer config`, for example:
+
+```bash
+composer config --unset repositories.filament-color-themes
+```
+
+Otherwise Composer still looks for `../filament-color-themes` and fails even though the package is on Packagist.
+
+<details>
+<summary>Local path development (optional)</summary>
+
+Only if you develop against a local clone — `url` must point to a real folder next to (or absolute path relative to) the app:
+
+```bash
+composer config repositories.filament-color-themes path C:/work/filament-color-themes
 composer require alenadashko/filament-color-themes:@dev
 ```
 
-Or via a Composer path repository in your app `composer.json`:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../filament-color-themes"
-        }
-    ],
-    "require": {
-        "alenadashko/filament-color-themes": "@dev"
-    }
-}
-```
+</details>
 
 ### 2. Register the plugin in your Panel Provider
 
