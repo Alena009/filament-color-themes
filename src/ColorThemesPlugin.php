@@ -331,6 +331,71 @@ class ColorThemesPlugin implements Plugin
             .fi-topbar > nav .fi-global-search-field input::placeholder {
                 color: rgba(255, 255, 255, 0.92) !important;
             }
+
+            /* Table toolbar (Search row) — same chrome as the app topbar */
+            .fi-ta-header-toolbar,
+            .fi-ta-header-ctn {
+                background-color: {$chrome} !important;
+                border-color: {$chrome} !important;
+            }
+
+            .fi-ta-header-toolbar,
+            .fi-ta-header-ctn {
+                border-radius: 0.75rem 0.75rem 0 0;
+            }
+
+            .fi-ta-header-toolbar .fi-icon-btn,
+            .fi-ta-header-toolbar .fi-icon-btn-icon,
+            .fi-ta-header-toolbar .fi-btn,
+            .fi-ta-header-toolbar .fi-btn-label,
+            .fi-ta-header-toolbar .fi-ac-btn-label,
+            .fi-ta-header-toolbar .fi-ta-actions,
+            .fi-ta-header-toolbar .fi-dropdown-trigger,
+            .fi-ta-header-ctn .fi-icon-btn,
+            .fi-ta-header-ctn .fi-icon-btn-icon {
+                color: #ffffff !important;
+            }
+
+            /* Kill wrapper backgrounds that peek as sharp corners behind the rounded search */
+            .fi-ta-header-toolbar .fi-ta-search,
+            .fi-ta-header-toolbar .fi-ta-search-field,
+            .fi-ta-header-toolbar .fi-ta-search-ctn,
+            .fi-ta-header-toolbar [class*="fi-ta-search"],
+            .fi-ta-header-ctn .fi-ta-search,
+            .fi-ta-header-ctn .fi-ta-search-field,
+            .fi-ta-header-ctn .fi-ta-search-ctn,
+            .fi-ta-header-ctn [class*="fi-ta-search"] {
+                background-color: transparent !important;
+                background-image: none !important;
+                box-shadow: none !important;
+                border-color: transparent !important;
+            }
+
+            .fi-ta-header-toolbar .fi-input-wrp,
+            .fi-ta-header-ctn .fi-input-wrp {
+                background-color: rgba(255, 255, 255, 0.16) !important;
+                border-color: rgba(255, 255, 255, 0.28) !important;
+                border-radius: 9999px !important;
+                overflow: hidden !important;
+                box-shadow: none !important;
+                outline: none !important;
+                --tw-ring-color: transparent !important;
+                --tw-ring-shadow: 0 0 #0000 !important;
+                --tw-ring-offset-shadow: 0 0 #0000 !important;
+                --tw-ring-offset-color: transparent !important;
+            }
+
+            .fi-ta-header-toolbar .fi-input-wrp input,
+            .fi-ta-header-toolbar .fi-ta-search-field input,
+            .fi-ta-header-toolbar .fi-input-wrp input::placeholder,
+            .fi-ta-header-toolbar .fi-ta-search-field input::placeholder,
+            .fi-ta-header-toolbar .fi-input-wrp .fi-icon,
+            .fi-ta-header-ctn .fi-input-wrp input,
+            .fi-ta-header-ctn .fi-input-wrp input::placeholder,
+            .fi-ta-header-ctn .fi-input-wrp .fi-icon {
+                color: rgba(255, 255, 255, 0.92) !important;
+                background-color: transparent !important;
+            }
 CSS;
 
         // Dark theme chrome needs light brand text — Filament logo often uses
@@ -448,6 +513,33 @@ CSS;
             .fi-main,
             .fi-main-ctn {
                 background-color: color-mix(in srgb, {$sidebarBg} 55%, white) !important;
+            }
+
+            /* Section — light header + thin theme border around the whole block */
+            .fi-section,
+            .fi-fo-section,
+            .fi-sc-section {
+                overflow: hidden !important;
+                border: 1px solid color-mix(in srgb, {$chrome} 32%, transparent) !important;
+                border-radius: 0.75rem !important;
+            }
+
+            .fi-section-header,
+            .fi-fo-section .fi-section-header,
+            .fi-sc-section .fi-section-header {
+                background-color: {$sidebarBg} !important;
+                border: none !important;
+                border-bottom: 1px solid color-mix(in srgb, {$chrome} 18%, transparent) !important;
+                border-top-left-radius: 0 !important;
+                border-top-right-radius: 0 !important;
+            }
+
+            .fi-section-header .fi-section-header-heading,
+            .fi-section-header .fi-section-header-description,
+            .fi-section-header .fi-icon-btn,
+            .fi-section-header .fi-icon-btn-icon,
+            .fi-section-header .fi-icon {
+                color: {$sidebarText} !important;
             }
 
             .fi-dropdown-panel,
