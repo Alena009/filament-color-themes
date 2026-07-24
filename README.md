@@ -1,38 +1,38 @@
 # Filament Color Themes
 
-Плагин для Filament PHP, который добавляет выбор цветовых тем панели из меню пользователя.
+A Filament PHP plugin that adds panel color theme selection from the user menu.
 
-## Возможности
+## Features
 
-- Переключатель тем **F / O / M** в user menu (рядом с light/dark/system)
-- Пять тем:
+- Theme switcher in the user menu (next to light/dark/system), with icon swatches
+- Five themes:
   - **ForestGreen**
   - **Office Blue**
   - **Midtone**
   - **Sepia**
   - **Midnight**
-- Выбор темы меняет primary-цвет, сайдбар и topbar панели
-- Цветовые темы и light/dark/system взаимоисключающие
-- Мультиязычность (EN / RU), легко расширяется
+- Selecting a theme updates the panel primary color, sidebar, and topbar
+- Color themes and light/dark/system are mutually exclusive
+- Multilingual (EN / RU), easy to extend
 
-## Требования
+## Requirements
 
 - PHP 8.2+
 - Filament 5.x
 - Laravel 11+ / 12+
 
-## Установка
+## Installation
 
-### 1. Подключите пакет
+### 1. Require the package
 
-Если пакет лежит локально рядом с проектом:
+If the package lives locally next to your app:
 
 ```bash
 composer config repositories.filament-color-themes path ../filament-color-themes
 composer require dashk/filament-color-themes:@dev
 ```
 
-Или через Composer path в `composer.json` приложения:
+Or via a Composer path repository in your app `composer.json`:
 
 ```json
 {
@@ -48,9 +48,9 @@ composer require dashk/filament-color-themes:@dev
 }
 ```
 
-### 2. Зарегистрируйте плагин в Panel Provider
+### 2. Register the plugin in your Panel Provider
 
-Обязательно добавьте плагин в `AdminPanelProvider` (или ваш panel provider):
+Add the plugin to `AdminPanelProvider` (or your panel provider):
 
 ```php
 use Dashk\FilamentColorThemes\ColorThemesPlugin;
@@ -63,7 +63,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-После установки / обновления плагина сбросьте кэш:
+After installing or updating the plugin, clear caches:
 
 ```bash
 php artisan filament:optimize-clear
@@ -71,7 +71,7 @@ php artisan optimize:clear
 php artisan view:clear
 ```
 
-В `AdminPanelProvider` должно быть так:
+Your `AdminPanelProvider` should look like this:
 
 ```php
 use Dashk\FilamentColorThemes\ColorThemesPlugin;
@@ -84,20 +84,21 @@ return $panel
     ], isPersistent: true);
 ```
 
-`isPersistent: true` обязателен для Livewire.
-### 3. (Опционально) Опубликуйте конфиг и переводы
+`isPersistent: true` is required for Livewire.
+
+### 3. (Optional) Publish config and translations
 
 ```bash
 php artisan vendor:publish --tag="filament-color-themes-config"
 php artisan vendor:publish --tag="filament-color-themes-translations"
 ```
 
-### Как это работает
+### How it works
 
-При выборе темы плагин меняет не только `primary`, но и палитру `gray` (фоны, бордеры, текст сайдбара и карточек).  
-`gray` строится с той же кривой светлоты, что у стандартного Zinc, но с оттенком выбранной темы — по аналогии с dark mode, где всё строится на вариациях тёмно-серого.
+When a theme is selected, the plugin updates both the `primary` palette and a tinted `gray` palette (backgrounds, borders, sidebar/card text).  
+`gray` follows the same lightness curve as Filament’s Zinc scale, but keeps a low chroma of the selected theme — similar to dark mode, where everything is built from dark-gray variations.
 
-Ограничить доступ к переключателю тем в user menu:
+Restrict access to the user-menu theme switcher:
 
 ```php
 ->plugin(
@@ -106,26 +107,26 @@ php artisan vendor:publish --tag="filament-color-themes-translations"
 )
 ```
 
-## Конфигурация
+## Configuration
 
-Файл `config/filament-color-themes.php`:
+File: `config/filament-color-themes.php`
 
-| Ключ | Описание | По умолчанию |
-|------|----------|--------------|
-| `session_key` | Ключ сессии для выбранной темы | `filament_color_theme` |
-| `default` | Тема по умолчанию (`null` = пока не выбрана) | `null` |
+| Key | Description | Default |
+|-----|-------------|---------|
+| `session_key` | Session key for the selected theme | `filament_color_theme` |
+| `default` | Default theme (`null` = none until selected) | `null` |
 
-Доступные ключи тем: `forest-green`, `office-blue`, `midtone`, `sepia`, `midnight`.
+Available theme keys: `forest-green`, `office-blue`, `midtone`, `sepia`, `midnight`.
 
-## Локализация
+## Localization
 
-Переводы находятся в:
+Translations live in:
 
 - `resources/lang/en/color-themes.php`
 - `resources/lang/ru/color-themes.php`
 
-Язык берётся из локали Laravel (`config('app.locale')`). Чтобы добавить язык, создайте папку `resources/lang/{locale}/color-themes.php` и опубликуйте переводы.
+The language is taken from the Laravel locale (`config('app.locale')`). To add a language, create `resources/lang/{locale}/color-themes.php` and publish the translations.
 
-## Лицензия
+## License
 
 MIT
