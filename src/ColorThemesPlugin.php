@@ -56,7 +56,10 @@ class ColorThemesPlugin implements Plugin
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::BODY_END,
-            fn (): HtmlString => $this->renderSwitcherScript(),
+            fn (): HtmlString => new HtmlString(
+                (string) $this->renderFilterPanelTypography()
+                . (string) $this->renderSwitcherScript()
+            ),
         );
     }
 
@@ -336,16 +339,18 @@ class ColorThemesPlugin implements Plugin
                 color: rgba(255, 255, 255, 0.92) !important;
             }
 
-            /* Table toolbar (Search row) — same chrome as the app topbar */
-            .fi-ta-header-toolbar,
-            .fi-ta-header-ctn {
+            /* Search toolbar stays chrome; filters use sidebar colors (see BODY_END). */
+            .fi-ta-header-toolbar {
                 background-color: {$chrome} !important;
                 border-color: {$chrome} !important;
+                border-radius: 0 !important;
             }
 
-            .fi-ta-header-toolbar,
             .fi-ta-header-ctn {
+                background-color: transparent !important;
+                border-color: transparent !important;
                 border-radius: 0.75rem 0.75rem 0 0;
+                overflow: hidden;
             }
 
             .fi-ta-header-toolbar .fi-icon-btn,
@@ -354,29 +359,21 @@ class ColorThemesPlugin implements Plugin
             .fi-ta-header-toolbar .fi-btn-label,
             .fi-ta-header-toolbar .fi-ac-btn-label,
             .fi-ta-header-toolbar .fi-ta-actions,
-            .fi-ta-header-toolbar .fi-dropdown-trigger,
-            .fi-ta-header-ctn .fi-icon-btn,
-            .fi-ta-header-ctn .fi-icon-btn-icon {
+            .fi-ta-header-toolbar .fi-dropdown-trigger {
                 color: #ffffff !important;
             }
 
-            /* Kill wrapper backgrounds that peek as sharp corners behind the rounded search */
             .fi-ta-header-toolbar .fi-ta-search,
             .fi-ta-header-toolbar .fi-ta-search-field,
             .fi-ta-header-toolbar .fi-ta-search-ctn,
-            .fi-ta-header-toolbar [class*="fi-ta-search"],
-            .fi-ta-header-ctn .fi-ta-search,
-            .fi-ta-header-ctn .fi-ta-search-field,
-            .fi-ta-header-ctn .fi-ta-search-ctn,
-            .fi-ta-header-ctn [class*="fi-ta-search"] {
+            .fi-ta-header-toolbar [class*="fi-ta-search"] {
                 background-color: transparent !important;
                 background-image: none !important;
                 box-shadow: none !important;
                 border-color: transparent !important;
             }
 
-            .fi-ta-header-toolbar .fi-input-wrp,
-            .fi-ta-header-ctn .fi-input-wrp {
+            .fi-ta-header-toolbar .fi-input-wrp {
                 background-color: rgba(255, 255, 255, 0.16) !important;
                 border-color: rgba(255, 255, 255, 0.28) !important;
                 border-radius: 9999px !important;
@@ -393,15 +390,12 @@ class ColorThemesPlugin implements Plugin
             .fi-ta-header-toolbar .fi-ta-search-field input,
             .fi-ta-header-toolbar .fi-input-wrp input::placeholder,
             .fi-ta-header-toolbar .fi-ta-search-field input::placeholder,
-            .fi-ta-header-toolbar .fi-input-wrp .fi-icon,
-            .fi-ta-header-ctn .fi-input-wrp input,
-            .fi-ta-header-ctn .fi-input-wrp input::placeholder,
-            .fi-ta-header-ctn .fi-input-wrp .fi-icon {
+            .fi-ta-header-toolbar .fi-input-wrp .fi-icon {
                 color: rgba(255, 255, 255, 0.92) !important;
                 background-color: transparent !important;
             }
-CSS;
 
+CSS;
         // Dark chrome topbars need light brand text — Filament logo often uses
         // gray-* utilities that beat a single color rule.
         $css .= <<<CSS
@@ -552,6 +546,108 @@ CSS;
 
         return new HtmlString(
             '<style id="filament-color-themes-vars">' . $css . '</style>'
+        );
+    }
+
+    /**
+     * Filters panel matches the sidebar: same background + nav text color.
+     * Injected at BODY_END so rules beat Filament/Tailwind text-gray-* utilities.
+     */
+    protected function renderFilterPanelTypography(): HtmlString
+    {
+        $theme = app(ColorThemeManager::class)->getCurrentTheme();
+
+        if (! $theme) {
+            return new HtmlString('');
+        }
+
+        $bg = $theme->cardBackground;
+        $text = $theme->cardText;
+        $chrome = $theme->cardBorder;
+        // Midnight sidebar is dark with light nav text — filters need a soft
+        // light surface and darker type so labels/inputs stay readable.
+        $inputText = $text;
+
+        if ($theme->key === 'midnight') {
+            $bg = '#f1f5f9';
+            $text = '#1e293b';
+            $inputText = '#0f172a';
+        }
+
+        $hint = "color-mix(in srgb, {$text} 72%, {$bg})";
+        $inputHint = "color-mix(in srgb, {$inputText} 55%, #ffffff)";
+
+        $css = <<<CSS
+            .fi-ta-filters-above-content-ctn,
+            .fi-ta-filters-below-content,
+            .fi-ta-header-ctn .fi-ta-filters-above-content-ctn {
+                background-color: {$bg} !important;
+                color: {$text} !important;
+            }
+
+            .fi-ta-filters,
+            .fi-ta-filters-above-content-ctn .fi-ta-filters {
+                background-color: transparent !important;
+                color: {$text} !important;
+            }
+
+            .fi-ta-filters h4,
+            .fi-ta-filters h4[class*="text-gray"],
+            .fi-ta-filters-above-content-ctn .fi-ta-filters h4,
+            .fi-ta-filters .fi-fo-field-wrp-label,
+            .fi-ta-filters .fi-fo-field-wrp-label span,
+            .fi-ta-filters .fi-fo-field-wrp-label span[class*="text-gray"],
+            .fi-ta-filters label.fi-fo-field-wrp-label,
+            .fi-ta-filters-above-content-ctn .fi-ta-filters .fi-fo-field-wrp-label span {
+                color: {$text} !important;
+                -webkit-text-fill-color: {$text} !important;
+            }
+
+            .fi-ta-filters .fi-fo-field-wrp-hint-label,
+            .fi-ta-filters .fi-fo-field-wrp-hint [class*="text-gray"],
+            .fi-ta-filters-above-content-ctn .fi-ta-filters .fi-fo-field-wrp-hint-label {
+                color: {$hint} !important;
+                -webkit-text-fill-color: {$hint} !important;
+            }
+
+            .fi-ta-filters-above-content-ctn > span .fi-icon-btn,
+            .fi-ta-filters-above-content-ctn > span .fi-btn,
+            .fi-ta-filters-above-content-ctn > span svg,
+            .fi-ta-filters-above-content-ctn [class*="fi-icon"] {
+                color: {$text} !important;
+                stroke: currentColor !important;
+            }
+
+            .fi-ta-filters .fi-input-wrp,
+            .fi-ta-filters .fi-select-input,
+            .fi-ta-filters-above-content-ctn .fi-ta-filters .fi-input-wrp {
+                background-color: #ffffff !important;
+                border: 1px solid color-mix(in srgb, {$chrome} 28%, #cbd5e1) !important;
+                border-radius: 0.5rem !important;
+                color: {$inputText} !important;
+                box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.06) !important;
+            }
+
+            .fi-ta-filters .fi-input-wrp input,
+            .fi-ta-filters .fi-input-wrp textarea,
+            .fi-ta-filters .fi-input-wrp select,
+            .fi-ta-filters .fi-select-input,
+            .fi-ta-filters .fi-input-wrp .fi-icon,
+            .fi-ta-filters-above-content-ctn .fi-ta-filters .fi-input-wrp input {
+                color: {$inputText} !important;
+                -webkit-text-fill-color: {$inputText} !important;
+                background-color: transparent !important;
+            }
+
+            .fi-ta-filters .fi-input-wrp input::placeholder,
+            .fi-ta-filters-above-content-ctn .fi-ta-filters .fi-input-wrp input::placeholder {
+                color: {$inputHint} !important;
+                -webkit-text-fill-color: {$inputHint} !important;
+            }
+            CSS;
+
+        return new HtmlString(
+            '<style id="filament-color-themes-filters">' . $css . '</style>'
         );
     }
 }
