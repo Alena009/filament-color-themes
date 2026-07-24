@@ -42,7 +42,7 @@
                     class="fi-color-theme-switcher-swatch"
                     style="background-color: {{ $theme->cardBorder }};"
                 >
-                    {{ $theme->getSwatchLetter() }}
+                    {!! $theme->getSwatchIconSvg() !!}
                 </span>
             </button>
         @endforeach
@@ -86,9 +86,15 @@
         height: 1.25rem;
         border-radius: 9999px;
         color: #fff;
-        font-size: 0.65rem;
-        font-weight: 700;
         line-height: 1;
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+
+    .fi-color-theme-switcher-icon {
+        width: 0.75rem;
+        height: 0.75rem;
+        display: block;
+        color: #fff;
+        stroke: #fff;
     }
 </style>

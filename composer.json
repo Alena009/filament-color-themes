@@ -1,5 +1,5 @@
 {
-    "name": "dashk/filament-color-themes",
+    "name": "alenadashko/filament-color-themes",
     "description": "Color themes switcher plugin for Filament panels",
     "keywords": [
         "filament",
@@ -8,12 +8,12 @@
         "themes",
         "colors"
     ],
-    "homepage": "https://github.com/dashk/filament-color-themes",
+    "homepage": "https://github.com/Alena009/filament-color-themes",
     "license": "MIT",
     "authors": [
         {
-            "name": "Dashk",
-            "role": "Developer"
+            "name": "Alena009",
+            "email": "dashkoalena@gmail.com"
         }
     ],
     "require": {
