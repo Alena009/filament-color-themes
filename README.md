@@ -5,10 +5,11 @@
 ## Возможности
 
 - Переключатель тем **F / O / M** в user menu (рядом с light/dark/system)
-- Три темы:
+- Четыре темы:
   - **ForestGreen**
   - **Office Blue**
   - **Midtone**
+  - **Sepia**
 - Выбор темы меняет primary-цвет, сайдбар и topbar панели
 - Цветовые темы и light/dark/system взаимоисключающие
 - Мультиязычность (EN / RU), легко расширяется
@@ -113,7 +114,7 @@ php artisan vendor:publish --tag="filament-color-themes-translations"
 | `session_key` | Ключ сессии для выбранной темы | `filament_color_theme` |
 | `default` | Тема по умолчанию (`null` = пока не выбрана) | `null` |
 
-Доступные ключи тем: `forest-green`, `office-blue`, `midtone`.
+Доступные ключи тем: `forest-green`, `office-blue`, `midtone`, `sepia`.
 
 ## Локализация
 

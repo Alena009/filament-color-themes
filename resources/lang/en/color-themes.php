@@ -16,6 +16,7 @@ return [
         'forest-green' => 'ForestGreen',
         'office-blue' => 'Office Blue',
         'midtone' => 'Midtone',
+        'sepia' => 'Sepia',
     ],
 
     'notifications' => [

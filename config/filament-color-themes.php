@@ -20,7 +20,7 @@ return [
     |
     | Theme key applied when the user has not selected a theme yet.
     | Set to null to keep Filament's original primary color until a theme
-    | is chosen. Available: forest-green, office-blue, midtone
+    | is chosen. Available: forest-green, office-blue, midtone, sepia
     |
     */
 

@@ -44,6 +44,15 @@ class ColorThemeManager
                 cardText: '#1f2937',
                 grayChromaStrength: 0.20,
             ),
+            'sepia' => $this->makeTheme(
+                key: 'sepia',
+                name: 'Sepia',
+                hex: '#8B5E3C',
+                cardBackground: '#f5e6d3',
+                cardBorder: '#6B4423',
+                cardText: '#3E2723',
+                grayChromaStrength: 0.32,
+            ),
         ]);
     }
 

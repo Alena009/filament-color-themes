@@ -398,10 +398,9 @@ class ColorThemesPlugin implements Plugin
             }
 CSS;
 
-        // Dark theme chrome needs light brand text — Filament logo often uses
+        // Dark chrome topbars need light brand text — Filament logo often uses
         // gray-* utilities that beat a single color rule.
-        if (in_array($theme->key, ['forest-green', 'office-blue', 'midtone'], true)) {
-            $css .= <<<CSS
+        $css .= <<<CSS
 
             .fi-topbar .fi-logo,
             .fi-topbar .fi-logo *,
@@ -417,7 +416,6 @@ CSS;
                 -webkit-text-fill-color: #ffffff !important;
             }
 CSS;
-        }
 
         $css .= <<<CSS
 
