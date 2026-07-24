@@ -4,8 +4,8 @@ namespace AlenaDashko\FilamentColorThemes;
 
 use Closure;
 use AlenaDashko\FilamentColorThemes\Http\Middleware\ApplyColorTheme;
+use AlenaDashko\FilamentColorThemes\Support\FilamentCompat;
 use Filament\Contracts\Plugin;
-use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -68,7 +68,7 @@ class ColorThemesPlugin implements Plugin
     public static function get(): static
     {
         /** @var static $plugin */
-        $plugin = Filament::getCurrentOrDefaultPanel()->getPlugin(app(static::class)->getId());
+        $plugin = FilamentCompat::getCurrentPanel()->getPlugin(app(static::class)->getId());
 
         return $plugin;
     }
@@ -102,9 +102,7 @@ class ColorThemesPlugin implements Plugin
             return new HtmlString('');
         }
 
-        $panelId = Filament::getCurrentPanel()?->getId()
-            ?? Filament::getCurrentOrDefaultPanel()?->getId()
-            ?? 'admin';
+        $panelId = FilamentCompat::getCurrentPanel()?->getId() ?? 'admin';
 
         $themeKey = $this->jsEncode($theme->key);
         $panelIdJs = $this->jsEncode($panelId);
@@ -134,9 +132,7 @@ class ColorThemesPlugin implements Plugin
         $clearUrl = URL::route('filament-color-themes.clear');
         $cookieName = app(ColorThemeManager::class)->getSessionKey();
         $hasActiveTheme = app(ColorThemeManager::class)->hasActiveTheme();
-        $panelId = Filament::getCurrentPanel()?->getId()
-            ?? Filament::getCurrentOrDefaultPanel()?->getId()
-            ?? 'admin';
+        $panelId = FilamentCompat::getCurrentPanel()?->getId() ?? 'admin';
 
         return new HtmlString(<<<HTML
             <script>
@@ -260,7 +256,15 @@ class ColorThemesPlugin implements Plugin
 
         foreach (['primary' => $theme->primary, 'gray' => $theme->gray] as $name => $palette) {
             foreach ($palette as $shade => $value) {
-                if (! is_string($value) || ! str_starts_with($value, 'oklch(')) {
+                if (! is_string($value)) {
+                    continue;
+                }
+
+                // Filament 5: oklch(...). Filament 3: "r, g, b".
+                $isOklch = str_starts_with($value, 'oklch(');
+                $isRgbTriplet = (bool) preg_match('/^\d{1,3},\s*\d{1,3},\s*\d{1,3}$/', $value);
+
+                if (! $isOklch && ! $isRgbTriplet) {
                     continue;
                 }
 

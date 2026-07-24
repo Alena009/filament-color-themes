@@ -17,9 +17,9 @@ A Filament PHP plugin that adds panel color theme selection from the user menu.
 
 ## Requirements
 
-- PHP 8.2+
-- Filament 5.x
-- Laravel 11+ / 12+
+- PHP 8.1+
+- Filament **3.2+** or **5.x**
+- Laravel 10+ / 11+ / 12+
 
 ## Installation
 
@@ -28,10 +28,8 @@ A Filament PHP plugin that adds panel color theme selection from the user menu.
 From Packagist (no `repositories` / path needed):
 
 ```bash
-composer require alenadashko/filament-color-themes:dev-main
+composer require alenadashko/filament-color-themes
 ```
-
-Until a tagged release exists, Composer needs the `dev-main` constraint (or `@dev`). If Composer complains about stability, either use that constraint or set `"minimum-stability": "dev"` with `"prefer-stable": true` in the app `composer.json`.
 
 **Important:** remove any leftover path repository for this package from the app `composer.json` / `composer config`, for example:
 

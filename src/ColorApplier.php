@@ -4,6 +4,7 @@ namespace AlenaDashko\FilamentColorThemes;
 
 use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
+use ReflectionObject;
 
 class ColorApplier
 {
@@ -24,7 +25,7 @@ class ColorApplier
 
     /**
      * Force the current theme colors onto the ColorManager, clearing any
-     * previously cached palette for this request.
+     * previously cached palette for this request (Filament 4/5).
      */
     public function apply(): void
     {
@@ -43,6 +44,13 @@ class ColorApplier
 
     protected function clearColorCache(ColorManager $manager): void
     {
+        $reflection = new ReflectionObject($manager);
+
+        // Filament 3 has no color cache; Filament 4/5 cache resolved palettes.
+        if (! $reflection->hasProperty('cachedColors')) {
+            return;
+        }
+
         // ColorManager::$cachedColors is an uninitialized typed array property.
         // Setting it to null throws; it must be unset so getColors() rebuilds.
         (function (): void {

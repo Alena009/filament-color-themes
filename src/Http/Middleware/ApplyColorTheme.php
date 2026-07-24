@@ -5,7 +5,7 @@ namespace AlenaDashko\FilamentColorThemes\Http\Middleware;
 use Closure;
 use AlenaDashko\FilamentColorThemes\ColorApplier;
 use AlenaDashko\FilamentColorThemes\ColorThemeManager;
-use Filament\Facades\Filament;
+use AlenaDashko\FilamentColorThemes\Support\FilamentCompat;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,7 +21,7 @@ class ApplyColorTheme
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $panel = Filament::getCurrentPanel() ?? Filament::getCurrentOrDefaultPanel();
+        $panel = FilamentCompat::getCurrentPanel();
 
         if (! $panel?->hasPlugin('filament-color-themes')) {
             return $next($request);
