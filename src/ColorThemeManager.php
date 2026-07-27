@@ -163,7 +163,7 @@ class ColorThemeManager
     }
 
     /**
-     * @return array{primary: array<int, string>, gray: array<int, string>}|null
+     * @return array{primary: array<int, string>}|null
      */
     public function getCurrentColors(): ?array
     {

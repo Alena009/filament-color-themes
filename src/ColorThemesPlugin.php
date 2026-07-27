@@ -278,9 +278,10 @@ class ColorThemesPlugin implements Plugin
 
         // Don't emit CSS vars for colors the panel defines via ->colors():
         // Filament renders those itself and the theme must not shadow them.
+        // Never emit --gray-*: Filament Zinc must stay for placeholders / Selects.
         $preservedKeys = app(ColorApplier::class)->getPreservedColorKeys();
 
-        foreach (['primary' => $theme->primary, 'gray' => $theme->gray] as $name => $palette) {
+        foreach (['primary' => $theme->primary] as $name => $palette) {
             if (in_array($name, $preservedKeys, true)) {
                 continue;
             }
@@ -314,6 +315,38 @@ class ColorThemesPlugin implements Plugin
         $css = <<<CSS
             :root, html.fi, .fi-body {
                 {$cssVariables}
+            }
+
+            /*
+             * Keep form controls readable: tinted gray used to wash out
+             * placeholders / Select options. Theme chrome is CSS-only;
+             * Filament Zinc gray stays for text. Scope to form fields only —
+             * not topbar / table-toolbar search (those need light-on-chrome).
+             */
+            html[data-filament-color-theme] .fi-fo-field-wrp .fi-dropdown-panel,
+            html[data-filament-color-theme] .fi-fo-select .fi-dropdown-panel {
+                background-color: #ffffff !important;
+                color: rgb(24, 24, 27) !important;
+            }
+
+            html[data-filament-color-theme] .fi-fo-field-wrp .fi-dropdown-panel .fi-dropdown-list-item,
+            html[data-filament-color-theme] .fi-fo-field-wrp .fi-dropdown-panel .fi-dropdown-list-item *,
+            html[data-filament-color-theme] .fi-fo-select .fi-dropdown-panel .fi-dropdown-list-item,
+            html[data-filament-color-theme] .fi-fo-select .fi-dropdown-panel .fi-dropdown-list-item * {
+                color: rgb(24, 24, 27) !important;
+                -webkit-text-fill-color: rgb(24, 24, 27) !important;
+            }
+
+            html[data-filament-color-theme] .fi-fo-field-wrp .fi-input-wrp input::placeholder,
+            html[data-filament-color-theme] .fi-fo-field-wrp .fi-select-input {
+                color: rgb(82, 82, 91) !important;
+                -webkit-text-fill-color: rgb(82, 82, 91) !important;
+            }
+
+            html[data-filament-color-theme] .fi-fo-field-wrp .fi-input-wrp input,
+            html[data-filament-color-theme] .fi-fo-field-wrp .fi-input-wrp textarea {
+                color: rgb(24, 24, 27) !important;
+                -webkit-text-fill-color: rgb(24, 24, 27) !important;
             }
 
             /*

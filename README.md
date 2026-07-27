@@ -98,8 +98,7 @@ php artisan vendor:publish --tag="filament-color-themes-translations"
 
 ### How it works
 
-When a theme is selected, the plugin updates both the `primary` palette and a tinted `gray` palette (backgrounds, borders, sidebar/card text).  
-`gray` follows the same lightness curve as Filament’s Zinc scale, but keeps a low chroma of the selected theme — similar to dark mode, where everything is built from dark-gray variations.
+When a theme is selected, the plugin updates the `primary` palette (unless the panel already defines it via `->colors()`). Sidebar, topbar, and filter chrome use dedicated theme colors (`cardBackground` / `cardBorder` / `cardText`) in CSS — Filament’s default Zinc `gray` is left alone so placeholders, Selects, and form text stay readable.
 
 ### Panel `->colors()` and themes
 

@@ -78,13 +78,16 @@ class Theme
     /**
      * Colors registered with FilamentColor / CSS variables.
      *
-     * @return array{primary: array<int, string>, gray: array<int, string>}
+     * Only `primary` is pushed into Filament's color manager. Replacing `gray`
+     * breaks placeholders, Select options, and other UI text that rely on
+     * Filament's Zinc scale — chrome surfaces use cardBackground / cardText CSS.
+     *
+     * @return array{primary: array<int, string>}
      */
     public function getFilamentColors(): array
     {
         return [
             'primary' => $this->primary,
-            'gray' => $this->gray,
         ];
     }
 }
