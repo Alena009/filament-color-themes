@@ -327,6 +327,7 @@ class ColorThemesPlugin implements Plugin
             html[data-filament-color-theme] .fi-fo-select .fi-dropdown-panel {
                 background-color: #ffffff !important;
                 color: rgb(24, 24, 27) !important;
+                z-index: 60 !important;
             }
 
             html[data-filament-color-theme] .fi-fo-field-wrp .fi-dropdown-panel .fi-dropdown-list-item,
@@ -410,7 +411,20 @@ class ColorThemesPlugin implements Plugin
                 background-color: transparent !important;
                 border-color: transparent !important;
                 border-radius: 0.75rem 0.75rem 0 0;
-                overflow: hidden;
+                /* Must stay visible — Select dropdowns in filters open downward
+                 * over the toolbar; overflow:hidden clipped them underneath. */
+                overflow: visible !important;
+            }
+
+            /* Filters sit above the search toolbar in the stacking order */
+            .fi-ta-filters-above-content-ctn {
+                position: relative;
+                z-index: 30;
+            }
+
+            .fi-ta-header-toolbar {
+                position: relative;
+                z-index: 1;
             }
 
             .fi-ta-header-toolbar .fi-icon-btn,
@@ -627,13 +641,20 @@ CSS;
                 background-color: color-mix(in srgb, {$sidebarBg} 55%, white) !important;
             }
 
-            /* Section — light header + thin theme border around the whole block */
+            /* Section — light header + thin theme border.
+             * overflow:visible so Select / date dropdowns are not clipped. */
             .fi-section,
             .fi-fo-section,
             .fi-sc-section {
-                overflow: hidden !important;
+                overflow: visible !important;
                 border: 1px solid color-mix(in srgb, {$chrome} 32%, transparent) !important;
                 border-radius: 0.75rem !important;
+            }
+
+            /* Table card: Filament defaults to overflow-hidden which clips
+             * filter Selects that open over the toolbar / table. */
+            .fi-ta-ctn {
+                overflow: visible !important;
             }
 
             .fi-section-header,
@@ -657,6 +678,10 @@ CSS;
             .fi-dropdown-panel,
             .fi-user-menu-panel {
                 color: inherit;
+            }
+
+            html[data-filament-color-theme] .fi-dropdown-panel {
+                z-index: 60 !important;
             }
             CSS;
 
@@ -702,6 +727,9 @@ CSS;
                 border: 1px solid color-mix(in srgb, {$chrome} 22%, transparent) !important;
                 border-bottom: none !important;
                 border-radius: 0.75rem 0.75rem 0 0 !important;
+                position: relative;
+                z-index: 30;
+                overflow: visible !important;
             }
 
             .fi-ta-filters,
