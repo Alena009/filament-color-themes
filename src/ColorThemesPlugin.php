@@ -416,15 +416,29 @@ class ColorThemesPlugin implements Plugin
                 overflow: visible !important;
             }
 
-            /* Filters sit above the search toolbar in the stacking order */
+            /* Filters sit above the search toolbar in the stacking order —
+             * keep this LOW (below Filament topbar z-20) so global search
+             * results are never covered by the filters strip. */
             .fi-ta-filters-above-content-ctn {
                 position: relative;
-                z-index: 30;
+                z-index: 2;
             }
 
             .fi-ta-header-toolbar {
                 position: relative;
                 z-index: 1;
+            }
+
+            /* Topbar + global search must stay above page/table chrome */
+            .fi-topbar {
+                z-index: 40 !important;
+            }
+
+            .fi-topbar .fi-global-search-results-ctn,
+            .fi-topbar .fi-global-search-results,
+            .fi-topbar .fi-dropdown-panel,
+            .fi-topbar [class*="fi-global-search"] .fi-dropdown-panel {
+                z-index: 50 !important;
             }
 
             .fi-ta-header-toolbar .fi-icon-btn,
@@ -728,7 +742,7 @@ CSS;
                 border-bottom: none !important;
                 border-radius: 0.75rem 0.75rem 0 0 !important;
                 position: relative;
-                z-index: 30;
+                z-index: 2;
                 overflow: visible !important;
             }
 
