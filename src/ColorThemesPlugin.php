@@ -677,8 +677,16 @@ CSS;
                 background-color: {$sidebarBg} !important;
                 border: none !important;
                 border-bottom: 1px solid color-mix(in srgb, {$chrome} 18%, transparent) !important;
-                border-top-left-radius: 0 !important;
-                border-top-right-radius: 0 !important;
+                /* Match section radius at the top when expanded */
+                border-radius: 0.75rem 0.75rem 0 0 !important;
+            }
+
+            /* Collapsed: header is the whole card — round all corners */
+            .fi-section.fi-collapsed > .fi-section-header,
+            .fi-fo-section.fi-collapsed > .fi-section-header,
+            .fi-sc-section.fi-collapsed > .fi-section-header {
+                border-bottom: none !important;
+                border-radius: 0.75rem !important;
             }
 
             .fi-section-header .fi-section-header-heading,
